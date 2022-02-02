@@ -1,34 +1,29 @@
-/* Copyright (C) 2020 Yusuf Usta.
-
-Licensed under the  GPL-3.0 License;
-you may not use this file except in compliance with the License.
-
-WhatsAsena - Yusuf Usta
-*/
-
-const config = require('../../config');
-const { DataTypes } = require('sequelize');
-
-const PluginDB = config.DATABASE.define('Plugin', {
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    url: {
-        type: DataTypes.TEXT,
-        allowNull: false
-    }
+const hyper = require("../Utilis/events");
+let {MessageType, MessageOptions, Mimetype} = require('@adiwajshing/baileys')
+const { getBuffer } = require('../Utilis/download');
+//Owner vcard by favas
+hyper.addCommand( //by favas...
+  { pattern: "blackser ?(.*)", fromMe: true, desc: "send owner vcard" },
+async (message, match) => {
+const vcard = 'https://i.imgur.com/TFVIDhj.jpeg'
+const favas = 'BEGIN:VCARD\n'
+            + 'VERSION:3.0\n' 
+            + 'FN:𝙰ﾌ𝙰͢Ϥ Տ𝙰𝖣\n'//dont copy without credits ⚠️
+            + 'ORG:𝙰ﾌ𝙰͢Ϥ Տ𝙰𝖣\n' 
+            + 'TEL;type=CELL;type=VOICE;waid=917012588744:917012588744\n'
+            + 'END:VCARD'
+const buff = await getBuffer(vcard)
+await message.client.sendMessage(message.jid, {displayname: "𝙰ﾌ𝙰͢Ϥ Տ𝙰𝖣", vcard: favas}, MessageType.contact,{quoted : {
+  key: {
+        fromMe: false,
+        participant: "0@s.whatsapp.net",
+        remoteJid: "status@broadcast"
+      }, //Vcard sender by favas
+      message: {
+        "imageMessage": {
+          "jpegThumbnail": buff.buffer,
+          "caption": "️️🌸⃝⟶𝙰ﾌ𝙰͢Ϥ Տ𝙰𝖣༨ ₀ͯ₇ͨ ͟ ⋆ 🍃"
+        }
+      }
+   }})
 });
-
-async function installPlugin(adres, file) {
-    var Plugin = await PluginDB.findAll({
-        where: {url: adres}
-    });
-
-    if (Plugin.length >= 1) {
-        return false;
-    } else {
-        return await PluginDB.create({ url: adres, name: file });
-    }
-}
-module.exports = { PluginDB: PluginDB, installPlugin: installPlugin };
